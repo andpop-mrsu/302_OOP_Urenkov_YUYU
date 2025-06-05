@@ -2,29 +2,16 @@
 
 namespace App;
 
-use App\CreditCard;
-
 class CreditCardAdapter implements PaymentAdapterInterface
 {
-    private $creditCard;
+    private CreditCard $card;
 
-    public function __construct(CreditCard $creditCard)
+    public function __construct(CreditCard $card)
     {
-        $this->creditCard = $creditCard;
+        $this->card = $card;
     }
-
-<<<<<<< HEAD
-    public function collectMoney($amount)
-    {
-        $result = $this->creditCard->transfer($amount);
-=======
     public function collectMoney($amount): bool
     {
-        $result = $this->creditCard->authorizeTransaction($amount);
->>>>>>> student/Task06
-        if (strpos($result, 'Authorization code:') !== false) {
-            return true;
-        }
-        return false;
+        return $this->card->authorizeTransaction($amount) ? true : false;
     }
 }

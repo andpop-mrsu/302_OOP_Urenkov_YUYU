@@ -2,50 +2,56 @@
 
 namespace App\Tests;
 
-use PHPUnit\Framework\TestCase;
-use App\BreakfastBuffet;
-use App\Dinner;
-use App\Sofa;
-use App\FoodDelivery;
-use App\Internet;
+use App\RoomDecorator;
+use App\DinnerDecorator;
+use App\FoodDeliveryDecorator;
 use App\EconomyRoom;
+use App\InternetDecorator;
+use App\LuxuryRoom;
+use App\SofaDecorator;
+use App\BreakfastDecorator;
 use App\StandardRoom;
-use App\SuiteRoom;
+use PHPUnit\Framework\TestCase;
 
 class RoomDecoratorTest extends TestCase
 {
-    public function testRoomDecorator()
+    public function testEconomyRoom()
     {
-        $economyRoom = new EconomyRoom();
-        $this->assertSame(1000, $economyRoom->getCost());
-        $this->assertSame('"Эконом" - 1000 руб/ночь', $economyRoom->getDescription());
+        $room = new EconomyRoom();
+        $this->assertEquals("Эконом", $room->getDescription());
+        $this->assertEquals(1000, $room->getPrice());
+    }
 
-        $economyRoom = new Dinner($economyRoom);
-        $this->assertSame(1800, $economyRoom->getCost());
-        $this->assertSame('"Эконом" - 1000 руб/ночь, ужин', $economyRoom->getDescription());
+    public function testStandardRoomWithInternet()
+    {
+        $room = new StandardRoom();
+        $room = new InternetDecorator($room);
 
-        $economyRoom = new Internet($economyRoom);
-        $this->assertSame(1900, $economyRoom->getCost());
-        $this->assertSame('"Эконом" - 1000 руб/ночь, ужин, выделенный Интернет', $economyRoom->getDescription());
+        $this->assertEquals("Стандарт, выделенный Интернет", $room->getDescription());
+        $this->assertEquals(2100, $room->getPrice());
+    }
 
-        $standardRoom = new StandardRoom();
-        $this->assertSame(2000, $standardRoom->getCost());
-        $this->assertSame('"Стандарт" - 2000 руб/ночь', $standardRoom->getDescription());
+    public function testLuxuryRoomWithAllServices()
+    {
+        $room = new LuxuryRoom();
+        $room = new InternetDecorator($room);
+        $room = new SofaDecorator($room);
+        $room = new FoodDeliveryDecorator($room);
+        $room = new BreakfastDecorator($room);
+        $room = new DinnerDecorator($room);
 
-        $standardRoom = new FoodDelivery($standardRoom);
-        $this->assertSame(2300, $standardRoom->getCost());
-        $this->assertSame('"Стандарт" - 2000 руб/ночь, доставка еды в номер', $standardRoom->getDescription());
+        $expectedDescription = "Люкс, выделенный Интернет, дополнительный диван, доставка еды в номер, завтрак \"шведский стол\", ужин";
+        $this->assertEquals($expectedDescription, $room->getDescription());
+        $this->assertEquals(5200, $room->getPrice());
+    }
 
-        $suiteRoom = new SuiteRoom();
-        $this->assertSame(3000, $suiteRoom->getCost());
-        $this->assertSame('"Люкс" - 3000 руб/ночь', $suiteRoom->getDescription());
+    public function testMultipleDecorators()
+    {
+        $room = new EconomyRoom();
+        $room = new BreakfastDecorator($room);
+        $room = new DinnerDecorator($room);
 
-        $suiteRoom = new Sofa($suiteRoom);
-        $this->assertSame(3500, $suiteRoom->getCost());
-        $this->assertSame('"Люкс" - 3000 руб/ночь, дополнительный диван', $suiteRoom->getDescription());
-
-        $suiteRoom = new BreakfastBuffet($suiteRoom);
-        $this->assertSame(4000, $suiteRoom->getCost());
-        $this->assertSame('"Люкс" - 3000 руб/ночь, дополнительный диван, завтрак "шведский стол"', $suiteRoom->getDescription());
+        $this->assertEquals("Эконом, завтрак \"шведский стол\", ужин", $room->getDescription());
+        $this->assertEquals(2300, $room->getPrice());
     }
 }

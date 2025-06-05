@@ -4,6 +4,6 @@ namespace App;
 
 interface Room
 {
-    public function getCost();
-    public function getDescription();
+    public function getDescription(): string;
+    public function getPrice(): float;
 }

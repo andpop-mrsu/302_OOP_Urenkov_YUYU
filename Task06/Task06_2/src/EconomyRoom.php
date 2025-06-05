@@ -6,13 +6,13 @@ use App\Room;
 
 class EconomyRoom implements Room
 {
-    public function getCost()
+    public function getDescription(): string
     {
-        return 1000;
+        return "Эконом";
     }
 
-    public function getDescription()
+    public function getPrice(): float
     {
-        return '"Эконом" - 1000 руб/ночь';
+        return 1000;
     }
 }

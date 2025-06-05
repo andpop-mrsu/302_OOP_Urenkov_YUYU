@@ -4,5 +4,5 @@ namespace App;
 
 interface PaymentAdapterInterface
 {
-    public function collectMoney($amount);
+    public function collectMoney($amount): bool;
 }

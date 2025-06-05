@@ -2,30 +2,16 @@
 
 namespace App;
 
-use App\PayPal;
-
 class PayPalAdapter implements PaymentAdapterInterface
 {
-    private $paypal;
+    private PayPal $payPal;
 
-    public function __construct(PayPal $paypal)
+    public function __construct(PayPal $payPal)
     {
-        $this->paypal = $paypal;
+        $this->payPal = $payPal;
     }
-
-<<<<<<< HEAD
-    public function collectMoney($amount)
-    {
-        $result = $this->paypal->authorizeTransaction($amount);
-        if ($result === 'PayPal Success!') {
-=======
     public function collectMoney($amount): bool
     {
-        $result = $this->paypal->transfer($this->paypal->getEmail(), $amount);
-        if ($result === 'Paypal Success!') {
->>>>>>> student/Task06
-            return true;
-        }
-        return false;
+        return $this->payPal->transfer("onafixed@mail.da", $amount) ? true : false;
     }
 }
